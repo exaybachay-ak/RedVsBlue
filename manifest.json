@@ -1,0 +1,29 @@
+{
+  "name": "Get pages source",
+  "version": "1.999",
+  "manifest_version": 5,
+  "description": "Get pages source from a popup",
+  "permissions": [
+    "activeTab",
+    "*://*/"
+],
+  "browser_action": {
+    "default_icon": "./icon.png",
+    "default_popup": "popup.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["jquery.js", "popup.js"]
+    }
+],
+
+  "icons": { "16": "./unarmed.png",
+           "48": "./unarmed.png",
+          "128": "./unarmed.png" },
+
+  "web_accessible_resources": [
+       "*"
+     ]
+}
