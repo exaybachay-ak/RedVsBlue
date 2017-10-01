@@ -1,5 +1,18 @@
 #Credit to creator of POSHGUI - https://poshgui.com/#
 
+$user = [Security.Principal.WindowsIdentity]::GetCurrent();
+(New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+
+if($user -contains "False"){
+	#drawTextbox UserInfo "You are NOT running as root" 275 30 375 350 ff0000
+	#remove-item $Form
+	return $null
+	write-output "You aren't root!!!"
+}
+else{
+	#drawTextbox UserInfo "You are running as root" 275 30 375 350 00ff00
+}
+
 #Set up constant variables for dashboard
 if(test-path .\extlogging.txt){
 }
@@ -22,12 +35,15 @@ Add-Type -AssemblyName System.Drawing
 ###   2. Make a /all options, for GPO deployment of all blue team settings
 ###   -sysmon, 300MB logs, PS Logging, IPINT, vulntrack, etc
 ###   
+###   3. Set up user checks with return if not root
+###   -currently have these in wrong part of script, and they don't work
+###
 ###   *Logging
 ###   *Sinkhole
 ###   *VulnTrack
 ###   *HNIDS
 ###   *IPINT
-
+###
 #####################################################################################
 ###   Set up functions
 #####################################################################################
@@ -113,7 +129,7 @@ function CreateRedteamButton{
 	$Form.controls.Add($Button)
 }
 
-function drawTextbox($name,$text,$width,$height,$locationx,$locationy,$color){
+function drawTextbox($name,$text,$width,$height,$locationx,$locationy,$color,$forecolor){
 	$name = New-Object system.windows.Forms.TextBox
 	$name.Text = "$text"
 	$name.width = "$width"
@@ -121,6 +137,7 @@ function drawTextbox($name,$text,$width,$height,$locationx,$locationy,$color){
 	$name.location = new-object system.drawing.point($locationx,$locationy)
 	$name.font = "Microsoft Sans Serif,10"
 	$name.BackColor = "#$color"
+	$name.ForeColor = "#$forecolor"
 	$Form.controls.Add($name)
 }
 
@@ -182,14 +199,14 @@ function Generate-Form{
 	CreateRedteamButton Redteam "Red Team" ffffff 300 50 177 542 {MoreDetails Redteam "This is some information about Red team, including what we will be doing and how to revert it." {CallScript Redteam}}
 
 	#Draw text boxes in window
-	drawTextbox Loggingtext "Set up Windows logging, according to NSA Spotting the Adversary document" 473 20 120 15 ffffff
-	drawTextbox VulnTracktext "Keep track of your vulnerabilities with alerts and email notifications" 473 20 120 111 ffffff
-	drawTextbox Sinkholetext "Configure routes to send malware traffic to NULL" 473 20 120 64 ffffff
-	drawTextbox HNIDStext "Host-based Network Intrusion Detection System" 473 20 120 154 ffffff
-	drawTextbox IPINTtext "Open-source intelligence about IP Address information" 473 20 120 200 ffffff
+	drawTextbox Loggingtext "Set up Windows logging, according to NSA Spotting the Adversary document" 473 20 120 15 ffffff 000000
+	drawTextbox VulnTracktext "Keep track of your vulnerabilities with alerts and email notifications" 473 20 120 111 ffffff 000000
+	drawTextbox Sinkholetext "Configure routes to send malware traffic to NULL" 473 20 120 64 ffffff 000000
+	drawTextbox HNIDStext "Host-based Network Intrusion Detection System" 473 20 120 154 ffffff 000000
+	drawTextbox IPINTtext "Open-source intelligence about IP Address information" 473 20 120 200 ffffff 000000
 	
 	#Draw System Info section banner
-	drawTextbox SystemInfo "                                                         V--V--V--V   System Health Information  V--V--V--V" 672 7 0 250 0000ff
+	drawTextbox SystemInfo "                                                         V--V--V--V   System Health Information  V--V--V--V" 672 7 0 250 0000ff ffffff
 
 
 	#####################################################################################
@@ -198,66 +215,54 @@ function Generate-Form{
 
 	#Draw System Info textboxes
 	if($seclog -lt 300){
-		drawTextbox Secmax "Maximum Security Logfile Size $seclog MB" 275 30 6 300 ff0000
+		drawTextbox Secmax "Maximum Security Logfile Size $seclog MB" 275 30 6 300 ff0000 000000
 	}
 	else{
-		drawTextbox Secmax "Maximum Security Logfile Size $seclog MB" 275 30 6 300 00ff00
+		drawTextbox Secmax "Maximum Security Logfile Size $seclog MB" 275 30 6 300 00ff00 000000
 	}
 
 	if($syslog -lt 300){
-		drawTextbox Sysmax "Maximum System Logfile Size $syslog MB" 275 30 6 325 ff0000
+		drawTextbox Sysmax "Maximum System Logfile Size $syslog MB" 275 30 6 325 ff0000 000000
 	}
 	else{
-		drawTextbox Sysmax "Maximum System Logfile Size $syslog MB" 275 30 6 325 00ff00
+		drawTextbox Sysmax "Maximum System Logfile Size $syslog MB" 275 30 6 325 00ff00 000000
 	}
 
 	if($applog -lt 300){
-		drawTextbox Appmax "Maximum Application Logfile Size $applog MB" 275 30 6 350 ff0000
+		drawTextbox Appmax "Maximum Application Logfile Size $applog MB" 275 30 6 350 ff0000 000000
 	}
 	else{
-		drawTextbox Appmax "Maximum Application Logfile Size $applog MB" 275 30 6 350 00ff00
+		drawTextbox Appmax "Maximum Application Logfile Size $applog MB" 275 30 6 350 00ff00 000000
 	}
 
 	if($pslog -lt 300){
-		drawTextbox PSmax "Maximum Powershell Logfile Size $pslog MB" 275 30 6 375 ff0000
+		drawTextbox PSmax "Maximum Powershell Logfile Size $pslog MB" 275 30 6 375 ff0000 000000
 	}
 	else{
-		drawTextbox PSmax "Maximum Powershell Logfile Size $pslog MB" 275 30 6 375 00ff00
+		drawTextbox PSmax "Maximum Powershell Logfile Size $pslog MB" 275 30 6 375 00ff00 000000
 	}
 
 	if($cpercentfree -lt 25){
-		drawTextbox FreespaceC "Free C drive space is $cpercentfree %" 275 30 375 300 ff0000
+		drawTextbox FreespaceC "Free C drive space is $cpercentfree %" 275 30 375 300 ff0000 000000
 	}
 	else{
-		drawTextbox FreespaceC "Free C drive space is $cpercentfree %" 275 30 375 300 00ff00
+		drawTextbox FreespaceC "Free C drive space is $cpercentfree %" 275 30 375 300 00ff00 000000
 	}
 
 	if($dpercentfree -lt 25){
-		drawTextbox FreespaceD "Free D drive space is $dpercentfree %" 275 30 375 325 ff0000
+		drawTextbox FreespaceD "Free D drive space is $dpercentfree %" 275 30 375 325 ff0000 000000
 	}
 	else{
-		drawTextbox FreespaceD "Free D drive space is $dpercentfree %" 275 30 375 325 00ff00
+		drawTextbox FreespaceD "Free D drive space is $dpercentfree %" 275 30 375 325 00ff00 000000
 	}
 
 	if($extlogging -match "are not"){
-		drawTextbox ExtLogging "You are not doing extended logging." 275 30 6 400 ff0000
+		drawTextbox ExtLogging "You are not doing extended logging." 275 30 6 400 ff0000 000000
 	}
 	else{
-		drawTextbox ExtLogging "You are doing extended logging." 275 30 6 400 00ff00
+		drawTextbox ExtLogging "You are doing extended logging." 275 30 6 400 00ff00 000000
 	}
 	
-	$user = [Security.Principal.WindowsIdentity]::GetCurrent();
-	(New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
-
-	if($user -like "True"){
-		drawTextbox UserInfo "You are running as root" 275 30 375 350 00ff00
-	}
-	if($user -like "True"){
-		drawTextbox UserInfo "You are NOT running as root" 275 30 375 350 ff0000
-		remove-item $Form
-		return
-	}
-
 	[void]$Form.ShowDialog()
 }
 
