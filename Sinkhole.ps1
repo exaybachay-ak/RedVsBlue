@@ -1,4 +1,6 @@
-<#    #Powershell blackhole script
+<#    
+
+      #Powershell blackhole script
           Just run this script and it will re-route potentially malicious traffic to null
           In order to verify this, try run a to traceroute to 64.182.208.181 (<-- update this address later)
             Your traceroute should route to null because this software has configured a rule to force specific outbound
@@ -29,8 +31,13 @@
       
 #>
 
+clear
+
 #Set error action to silent, to suppress info
 $ErrorActionPreference = "SilentlyContinue"
+
+#Notify user that we are downloading blacklists
+write-output "Downloading blacklists... please wait..."
 
 #Retreive blacklist hosts from various sources
 $greensnow = (invoke-webrequest -URI "blocklist.greensnow.co/greensnow.txt" -UseBasicParsing -TimeoutSec 60)
@@ -45,6 +52,9 @@ $alientvault.rawcontent >> blacklist.txt
 
 #Filter out non-ip addresses from list
 $blacklist = get-content blacklist.txt | select-string -pattern "^[0-255]{3}"
+
+#Notify user that setup tasks are done
+write-output "Done downloading and setting up blacklist files"
 
 #Set up functions for blocking and unblocking
 function Block-Hosts
@@ -119,6 +129,7 @@ function displayMenu
   }
 
   if($userresponse -eq "6"){
+    write-output "Attempting to kill the script NOW"
     return
     exit
   }
