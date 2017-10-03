@@ -44,14 +44,30 @@ Add-Type -AssemblyName System.Drawing
 ###   *HNIDS
 ###   *IPINT
 ###
+### 
+###   .NET 4.5
+###   Windows Management Framework (WMF) 4.0 (Windows 7/2008 only)
+###   Windows Management Framework (WMF) 5.0
+###   Windows 7 and 2008 R2 must be upgraded to Wind
+###
+###   
+###   »      .NET 4.5
+###   »      Windows Management Framework (WMF) 4.0
+###   »      The appropriate WMF 4.0 update
+###           -     8.1/2012 R2 – KB3000850
+###           -     2012 – KB3119938
+###           -     7/2008 R2 SP1 – KB3109118
+###   
 #####################################################################################
 ###   Set up functions
 #####################################################################################
 
 Function CallScript{
 	param( $scriptname )
-	. "$(pwd)\$scriptname.ps1"
-	#invoke-expression 'cmd /c start powershell -Command { $scriptname.ps1;pause }'
+	#this works, but isn't good enough - need to spawn another window
+	#. "$(pwd)\$scriptname.ps1"
+	start-process powershell -argument "$(pwd)\$scriptname.ps1" -NoNewWindow
+	#start-process powershell -argument "$(pwd)\$scriptname.ps1"
 	#invoke-expression 'cmd /c start powershell -Command { $scriptname.ps1;pause }'
 	#start powershell { $scriptname.ps1; Read-Host }
 	#start-Process powershell { $scriptname.ps1; Read-Host }
@@ -67,7 +83,7 @@ Function MoreDetails{
 	$NewForm = New-Object system.Windows.Forms.Form
 	$NewForm.Text = "Red vs Blue"
 	$NewForm.BackColor = "#0033ff"
-	$NewForm.TopMost = $true
+	#$NewForm.TopMost = $true
 	$NewForm.Width = 672
 	$NewForm.Height = 350
 
@@ -174,7 +190,7 @@ function Generate-Form{
 	$Form = New-Object system.Windows.Forms.Form
 	$Form.Text = "Red vs Blue"
 	$Form.BackColor = "#0033ff"
-	$Form.TopMost = $true
+	#$Form.TopMost = $true
 	$Form.Width = 672
 	$Form.Height = 650
 
@@ -273,12 +289,12 @@ Generate-Form
 
 #Keep the form information updated
 #Figure out why refresh isn't working
-while($i -lt 1000000){
-	sleep(500)
-	if($seclog -lt 3072000){
-		$Secmax.BackColor = 'red'
-	}
-
-	$Form.Refresh()
-	[void]$Form.ShowDialog()
-}
+#while($i -lt 1000000){
+#	sleep(500)
+#	if($seclog -lt 3072000){
+#		$Secmax.BackColor = 'red'
+#	}
+#
+#	$Form.Refresh()
+#	[void]$Form.ShowDialog()
+#}
