@@ -110,7 +110,7 @@ if($dotnetcheck -ge 4.5){
 
 	if($version.Major -ge 5){
 		# Apply registry changes to enable extended logging
-		& regedit "$(pwd)\PS_logging.reg"
+		& regedit /s "$(pwd)\PS_logging.reg"
 	}
 	else{
 		write-host "You must upgrade your PowerShell (WMF) version to 5 or above to get full logging capabilities.  Please close this window, upgrade to version 5 and re-run this script."
