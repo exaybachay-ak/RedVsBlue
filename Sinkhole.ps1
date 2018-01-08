@@ -43,15 +43,18 @@ write-output "Downloading blacklists... please wait..."
 $greensnow = (invoke-webrequest -URI "blocklist.greensnow.co/greensnow.txt" -UseBasicParsing -TimeoutSec 60)
 $bambenek = (invoke-webrequest -URI "osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt" -UseBasicParsing -TimeoutSec 60)
 $alienvault = (invoke-webrequest -URI "https://reputation.alienvault.com/reputation.unix" -UseBasicParsing -TimeoutSec 60)
-
+$binarybanlist = (invoke-webrequest -URI "https://www.binarydefense.com/banlist.txt" -UseBasicParsing -TimeoutSec 60)
+$binarytorlist = (invoke-webrequest -URI "https://www.binarydefense.com/tor.txt" -UseBasicParsing -TimeoutSec 60)
 
 #Echo all ip addresses out into a full blacklist file
 $greensnow.rawcontent > blacklist.txt
 $banbenek.rawcontent >> blacklist.txt
 $alientvault.rawcontent >> blacklist.txt
+$binarybanlist.rawcontent >> blacklist.txt
+$binarytorlist.rawcontent >> blacklist.txt
 
 #Filter out non-ip addresses from list
-$blacklist = get-content blacklist.txt | select-string -pattern "^[0-255]{3}"
+$blacklist = get-content blacklist.txt | select-string -pattern "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$" | sort-object | Get-Unique
 
 #Notify user that setup tasks are done
 write-output "Done downloading and setting up blacklist files"
@@ -67,7 +70,7 @@ function Block-Hosts
 function Unblock-Hosts
 {
   $blacklist | %{
-    Remove-NetRoute -DestinationPrefix $_/32 -Confirm:$false
+    Remove-NetRoute -NextHop "0.0.0.0" -Confirm:$false 2>&1 | out-null
   }
 }
 
@@ -95,9 +98,7 @@ function displayMenu
   write-host "5. Show me the current routing table"
   write-host "6. Exit"
   write-host "============================================="
-
-  $userresponse = Read-Host -Prompt 'Your Choice:'  
-
+  $userresponse = Read-Host -Prompt 'Your Choice'
 
   if($userresponse -eq "1"){
     Block-Hosts
@@ -129,9 +130,7 @@ function displayMenu
   }
 
   if($userresponse -eq "6"){
-    write-output "Attempting to kill the script NOW"
-    return
-    exit
+    break
   }
 
   else{
