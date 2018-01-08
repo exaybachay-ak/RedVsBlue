@@ -90,7 +90,7 @@ if($dotnetcheck -ge 4.5){
 
 	if($version.Major -ge 5){
 		# Apply registry changes to enable extended logging
-		& regedit "$(pwd)\PS_logging.reg"
+		& regedit /s "$(pwd)\PS_logging.reg"
 	}
 	else{
 		break
