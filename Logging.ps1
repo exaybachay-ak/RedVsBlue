@@ -1,4 +1,22 @@
 #####################################################################################
+###   Sysmon install and tweaks
+#####################################################################################
+# Further info on sysmon installation:
+# https://cqureacademy.com/blog/server-monitoring/sysmon
+
+& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
+
+$sysmoninstalled = test-path "C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx"
+
+if($sysmoninstalled -eq "True"){
+	write-host > "$(pwd)\extlogging.txt"
+}
+else{
+	
+}
+
+
+#####################################################################################
 ###   Gather information about system state
 #####################################################################################
 
@@ -15,7 +33,7 @@ $seclog = $loginfo[8].MaximumKilobytes
 $syslog = $loginfo[9].MaximumKilobytes	
 $applog = $loginfo[0].MaximumKilobytes
 $pslog = $loginfo[10].MaximumKilobytes
-#$sysmonlog = $loginfo
+$sysmonlog = Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational"
 
 #Warning message to abort if disk space is low
 #1073741824 bytes is 1GB
@@ -29,23 +47,6 @@ if($diskinfo.Free -lt 1073741824){
 	}
 }
 
-
-#####################################################################################
-###   Sysmon install and tweaks
-#####################################################################################
-# Further info on sysmon installation:
-# https://cqureacademy.com/blog/server-monitoring/sysmon
-
-& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
-
-$sysmoninstalled = test-path "C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx"
-
-if($sysmoninstalled -eq "True"){
-	write-host > "$(pwd)\extlogging.txt"
-}
-else{
-	
-}
 
 #####################################################################################
 ###   Increase logging to max of 300MB
@@ -68,6 +69,10 @@ if($pslog -lt 307200){
 if($pslog -lt 307200){
 	limit-eventlog -logname "Windows Powershell" -MaximumSize 300MB		
 }
+if($sysmonlog.MaximumSizeInBytes -lt 2147483648){
+	wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:2147483648
+}
+
 
 #####################################################################################
 ###   Registry mods for Powershell logging
