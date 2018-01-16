@@ -4,15 +4,13 @@
 # Further info on sysmon installation:
 # https://cqureacademy.com/blog/server-monitoring/sysmon
 
-& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
-
 $sysmoninstalled = test-path "C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx"
 
 if($sysmoninstalled -eq "True"){
 	write-host > "$(pwd)\extlogging.txt"
 }
 else{
-	
+	& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
 }
 
 
@@ -36,8 +34,8 @@ $pslog = $loginfo[10].MaximumKilobytes
 $sysmonlog = Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational"
 
 #Warning message to abort if disk space is low
-#1073741824 bytes is 1GB
-if($diskinfo.Free -lt 1073741824){
+#3221225472 bytes is 3GB
+if($diskinfo.Free -lt 3221225472){
 	$question = read-host "You are critically low on storage.  Please reconsider increasing your free space before continuing.  If you still want to proceed, type OKAY."
 	if($question -eq "OKAY"){
 		
