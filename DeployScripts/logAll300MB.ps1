@@ -1,4 +1,13 @@
 #####################################################################################
+###   Sysmon install and tweaks
+#####################################################################################
+# Further info on sysmon installation:
+# https://cqureacademy.com/blog/server-monitoring/sysmon
+
+& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
+
+
+#####################################################################################
 ###   Gather information about system state
 #####################################################################################
 
@@ -15,16 +24,8 @@ $seclog = $loginfo[8].MaximumKilobytes
 $syslog = $loginfo[9].MaximumKilobytes	
 $applog = $loginfo[0].MaximumKilobytes
 $pslog = $loginfo[10].MaximumKilobytes
-#$sysmonlog = $loginfo
+$sysmonlog = Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational"
 
-
-#####################################################################################
-###   Sysmon install and tweaks
-#####################################################################################
-# Further info on sysmon installation:
-# https://cqureacademy.com/blog/server-monitoring/sysmon
-
-& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
 
 #####################################################################################
 ###   Increase logging to max of 300MB
@@ -46,6 +47,9 @@ if($pslog -lt 307200){
 }
 if($pslog -lt 307200){
 	limit-eventlog -logname "Windows Powershell" -MaximumSize 300MB		
+}
+if($sysmonlog.MaximumSizeInBytes -lt 2147483648){
+	wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:2147483648
 }
 
 #####################################################################################
