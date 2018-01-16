@@ -10,7 +10,7 @@ if($sysmoninstalled -eq "True"){
 	write-host > "$(pwd)\extlogging.txt"
 }
 else{
-	& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
+	& "$(pwd)\sysmon.exe" -accepteula -i -h md5,sha256 -l -n
 }
 
 #####################################################################################
