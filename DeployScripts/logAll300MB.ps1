@@ -4,8 +4,14 @@
 # Further info on sysmon installation:
 # https://cqureacademy.com/blog/server-monitoring/sysmon
 
-& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
+$sysmoninstalled = test-path "C:\Windows\System32\winevt\Logs\Microsoft-Windows-Sysmon%4Operational.evtx"
 
+if($sysmoninstalled -eq "True"){
+	write-host > "$(pwd)\extlogging.txt"
+}
+else{
+	& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
+}
 
 #####################################################################################
 ###   Gather information about system state
