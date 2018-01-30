@@ -7,10 +7,6 @@ $FormatEnumerationLimit=-1
 #####################################################################################
 ###   Get network connections from Sysmon event log
 #####################################################################################
-#
-###---> Need to approach this the opposite way
-###------> Get all IP addys from Events and scan each against blacklist.txt
-#
 #Get list of suspicious IP Addresses to scan
 if(test-path .\blacklist.txt){
 	write-output "Looks like you already have the blacklist"
@@ -118,42 +114,12 @@ foreach($md5 in $md5eventssplit)
 $md5arr = $md5arr | sort-object | get-unique
 
 
+#########################################################################################
+###   Scan MD5 List With VirusTotal API
+#########################################################################################
 #Take MD5 list and scan with VirusTotal API
 #Install Posh-VirusTotal module
 iex (New-Object Net.WebClient).DownloadString("https://gist.githubusercontent.com/darkoperator/9138373/raw/22fb97c07a21139a398c2a3d6ca7e3e710e476bc/PoshVTInstall.ps1")
 
-#########################################################################################
-###   Specify VirusTotal API Key
-#########################################################################################
-
+#Set VirusTotal API Key
 Set-VTAPIKey -APIKey efffc8248da060451491096897a3d4a05f6d0641c9eb93a54c3f95e46411f27e -MasterPassword What_The_Fuck_THISISBS$#@!
-
-
-
-<#
-
-#This one seems to be the best so far.. it just doesn't sort/unique properly
-
-
-
-write-output " "
-	
-$md5listnew = Get-WinEvent -FilterHashTable @{ logname = "Microsoft-Windows-Sysmon/Operational"; Id = 1; StartTime=$Yesterday } -erroraction silentlycontinue | Where-Object {$_.Message -Like "*MD5*" } | fl * | out-string | select-string -Pattern "MD5=................................" -All | Select Matches | out-string | sort-object | get-unique
-
-	$FormatEnumerationLimit=-1
-	$md5listnew | ft -wrap -autosize
-
-
-$md5eventstring = Get-WinEvent -FilterHashTable @{ logname = "Microsoft-Windows-Sysmon/Operational"; Id = 1; StartTime=$Yesterday } -erroraction silentlycontinue | Where-Object {$_.Message -Like "*MD5*" } | fl * | out-string
-
-$md5listlong = $md5eventstring | sls -Pattern "MD5=................................" -All | Select Matches
-$md5liststring = $md5listlong | out-string
-
-$md5list = $md5liststring -replace "MD5=", ""
-
-$newmd5list = @()
-foreach($md5 in $md5list){
-	$md5
-}
-
-#>
