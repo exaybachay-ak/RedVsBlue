@@ -44,14 +44,7 @@ if((test-path .\blacklist.txt) -eq $False){
 	write-output "Done downloading and setting up blacklist files"
 }
 
-
-<#
-foreach($ipaddy in $blacklist){
-	write-output "Checking for $ipaddy"
-	Get-WinEvent -FilterHashTable @{ logname = "Microsoft-Windows-Sysmon/Operational"; Id = 3; StartTime=$Yesterday } -erroraction silentlycontinue | Where-Object {$_.Message -Like "*$ipaddy*" } | fl *
-}
-#>
-
+#Get events from Sysmon event logs
 $netevents = Get-WinEvent -FilterHashTable @{ logname = "Microsoft-Windows-Sysmon/Operational"; Id = 3; StartTime=$Yesterday } -erroraction silentlycontinue | Where-Object {$_.Message -Like "*DestinationIP*" } | fl * | out-string | select-string -Pattern "DestinationIP..[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}" -All | Select Matches | sort-object | get-unique
 
 #Get full array without truncation, then put a string out
