@@ -13,11 +13,17 @@ if (!$apikey -or $apikey.length -lt 64){
 #Import VirusTotal API module
 # CREDIT TO David B Heise
 #   https://archive.codeplex.com/?p=psvirustotal
-import-module .\psvirustotal\VirusTotal.psm1
+Unblock-file .\psvirustotal\VirusTotal.psm1
+Import-module .\psvirustotal\VirusTotal.psm1
 
 #Import SQLLite module
 # 
 #   https://github.com/RamblingCookieMonster/PSSQLite
+Unblock-file .\PSSQLite-master\PSSQlite\PSSQLite.psm1
+Unblock-file .\PSSQLite-master\PSSQlite\Invoke-SqliteBulkCopy.ps1
+Unblock-file .\PSSQLite-master\PSSQlite\Invoke-SqliteQuery.ps1
+Unblock-file .\PSSQLite-master\PSSQlite\New-SqliteConnection.ps1
+Unblock-file .\PSSQLite-master\PSSQlite\Out-DataTable.ps1
 Import-module .\PSSQLite-master\PSSQlite\PSSQLite.psm1
 Install-module PSSQLite
 
@@ -209,9 +215,6 @@ $VTScanString = $VTScan | out-string
 
 #Look for all matches, to determine if it's worth warning about
 $Scanmatches = $VTScanString | sls -Pattern "positives=[2-9]{1,2}" -all | Select Matches
-
-
-
 
 #####################################################################################
 ###   Get file info from Sysmon event log
