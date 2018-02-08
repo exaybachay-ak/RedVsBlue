@@ -3,8 +3,7 @@
 #####################################################################################
 $Yesterday = (Get-Date) - (New-TimeSpan -Day 1)
 $FormatEnumerationLimit=-1
-#$apikey = Read-Host -Prompt "HNIDS.ps1 relies on VirusTotal intelligence.  Enter your VirusTotal API Key to continue"
-$apikey = "7ceaa6f71020d0b143ba0e05cc3619865679a24bdebfe01b5a5e92acd760ac02"
+$apikey = Read-Host -Prompt "HNIDS.ps1 relies on VirusTotal intelligence.  Enter your VirusTotal API Key to continue"
 if (!$apikey -or $apikey.length -lt 64){
 	write-output "You must enter a valid API key to use this script.  Please retry, using a valid VT API Key"
 	exit
@@ -58,7 +57,6 @@ $netarr = $netarr | sort-object | get-unique
 #Display a gridview of detected IP Addresses
 #$netarr | out-gridview
 
-
 #Create a bunch of hashtables to store VT scan results
 $iplist = @{}
 $countrylist = @{}
@@ -67,7 +65,10 @@ $Resolutionlist = @{}
 $DetectedURLlist = @{}
 $DetectedDownloaded = @{}
 $UndetectedURLlist = @{}
+$WorthInvestigating = @{}
 
+$scaninfo = @()
+$offbyone = 1
 foreach($ip in $netarr){
 	$report = Get-VTReport -VTApiKey $apikey -ip $ip
 
@@ -81,18 +82,56 @@ foreach($ip in $netarr){
 	$DetectedURLlist.Add($netarr.IndexOf($ip), $report.detected_urls[0])
 	$UndetectedURLlist.Add($netarr.IndexOf($ip), $report.undetected_urls[0])
 	$DetectedDownloaded.Add($netarr.IndexOf($ip), $report.detected_downloaded_samples[0])
-}
 
-$scaninfo = @()
-foreach($ip in $netarr){
-	$hash = New-Object PSObject -property @{Index=$netarr.IndexOf($ip);IP=$ip;Country=$countrylist[$netarr.IndexOf($ip)];ASOwner=$ASOwnerList[$netarr.IndexOf($ip)];Resolution=$ResolutionList[$netarr.IndexOf($ip)];DetectedURL=$DetectedURLlist[$netarr.IndexOf($ip)];UndetectedURLs=$UndetectedURLlist[$netarr.IndexOf($ip)];DetectedMalware=$DetectedDownloaded[$netarr.IndexOf($ip)]}
+	if(!$report.detected_downloaded_samples[0] -and !$report.detected_urls[0]){
+		$WorthInvestigating.Add($netarr.IndexOf($ip), "N")
+	}
+	if($DetectedDownloaded -or $DetectedURLlist){
+		$WorthInvestigating.Add($netarr.IndexOf($ip), "Y")
+	}
+
+	$hash = New-Object PSObject -property @{Index=$netarr.IndexOf($ip);IP=$ip;Country=$countrylist[$netarr.IndexOf($ip)];ASOwner=$ASOwnerList[$netarr.IndexOf($ip)];Resolution=$ResolutionList[$netarr.IndexOf($ip)];DetectedURL=$DetectedURLlist[$netarr.IndexOf($ip)];UndetectedURLs=$UndetectedURLlist[$netarr.IndexOf($ip)];DetectedMalware=$DetectedDownloaded[$netarr.IndexOf($ip)];WorthInvestigating=$WorthInvestigating[$netarr.IndexOf($ip)]}
 	$scaninfo += $hash
-}
 
-#Display a grid view of all VT data
-$scaninfo | select-object Index,IP,Country,ASOwner,DetectedMalware,Resolution,DetectedURL,UndetectedURLs | out-gridview
+	if($offbyone % 4 -eq 0){
+		#Display a grid view of all VT data
+		$scaninfo | select-object Index,IP,Country,WorthInvestigating,ASOwner,DetectedMalware,Resolution,DetectedURL,UndetectedURLs | out-gridview
+
+		sleep 60
+	}
+
+	$offbyone += 1
+}
 
 <#
+(0..$netarr.length) | %{
+	$reportip = $_ | out-string
+	$report = Get-VTReport -VTApiKey $apikey -ip $reportip
+
+	#sort the resolutions out by last_resolved date, so we can grab latest one
+	$resolution = $report.resolutions | sort-object -property last_resolved -descending
+
+	$iplist.Add($_, $netarr[$_])
+	$countrylist.Add($_, $report.country)
+	$ASOwnerlist.Add($_, $report.as_owner)
+	$Resolutionlist.Add($_, $resolution[0])
+	$DetectedURLlist.Add($_, $report.detected_urls[0])
+	$UndetectedURLlist.Add($_, $report.undetected_urls[0])
+	$DetectedDownloaded.Add($_, $report.detected_downloaded_samples[0])
+
+	$hash = New-Object PSObject -property @{Index=$_;IP=$reportip;Country=$countrylist[$_];ASOwner=$ASOwnerList[$_];Resolution=$ResolutionList[$_];DetectedURL=$DetectedURLlist[$_];UndetectedURLs=$UndetectedURLlist[$_];DetectedMalware=$DetectedDownloaded[$_]}
+
+	$scaninfo += $hash
+
+	if(($_ % 4 -eq 0) -and ($_ -ne 0)){
+		#Display a grid view of all VT data
+		$scaninfo | select-object Index,IP,Country,ASOwner,DetectedMalware,Resolution,DetectedURL,UndetectedURLs | out-gridview
+
+		sleep 59
+	}
+
+}
+
 #########################################################
 # Create a SQLite database to store VirusTotal information
 #########################################################
