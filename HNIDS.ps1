@@ -1,8 +1,35 @@
 #####################################################################################
+###   Set up scheduled task to run at 10PM
+#####################################################################################
+schtasks /create /SC DAILY /TN HNIDS /TR .\HNIDS-scheduled.ps1 /ST 20:00 /F
+
+#####################################################################################
+###   Check for user security context, exit if not running as admin
+#####################################################################################
+
+$user = [Security.Principal.WindowsIdentity]::GetCurrent();
+$userisadmin = (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+
+if($userisadmin){
+}
+
+else{
+	write-output "You aren't root.  Please re-launch PowerShell with Run As Administrator option to ensure proper functionality."
+	exit
+}
+
+#####################################################################################
 ###   Set up variables, API key, and import modules
 #####################################################################################
 $Yesterday = (Get-Date) - (New-TimeSpan -Day 1)
 $FormatEnumerationLimit=-1
+$ErrorActionPreference = "SilentlyContinue"
+$date = Get-Date -format "yyyyMMMd"
+$hourmin = Get-Date -format "hhmm"
+$logtime = "HNIDS_$date" + "_" + "$hourmin.log"
+$pth = (pwd).path
+$outfile = $pth + "\" + $logtime
+
 $apikey = Read-Host -Prompt "HNIDS.ps1 relies on VirusTotal intelligence.  Enter your VirusTotal API Key to continue"
 if (!$apikey -or $apikey.length -lt 64){
 	write-output "You must enter a valid API key to use this script.  Please retry, using a valid VT API Key"
@@ -68,40 +95,42 @@ $UndetectedURLlist = @{}
 $WorthInvestigating = @{}
 
 $scaninfo = @()
-$offbyone = 1
+
 foreach($ip in $netarr){
+	write-progress -Activity "Scanning IP Addresses" -status "Scanning IP: $ip" `
+	-percentComplete ($netarr.IndexOf($ip) / $netarr.length*100 )
+	
 	$report = Get-VTReport -VTApiKey $apikey -ip $ip
 
 	#sort the resolutions out by last_resolved date, so we can grab latest one
 	$resolution = $report.resolutions | sort-object -property last_resolved -descending
 
-	$iplist.Add($netarr.IndexOf($ip), $ip)
-	$countrylist.Add($netarr.IndexOf($ip), $report.country)
-	$ASOwnerlist.Add($netarr.IndexOf($ip), $report.as_owner)
-	$Resolutionlist.Add($netarr.IndexOf($ip), $resolution[0])
-	$DetectedURLlist.Add($netarr.IndexOf($ip), $report.detected_urls[0])
-	$UndetectedURLlist.Add($netarr.IndexOf($ip), $report.undetected_urls[0])
-	$DetectedDownloaded.Add($netarr.IndexOf($ip), $report.detected_downloaded_samples[0])
+	$iplist.Add($netarr.IndexOf($ip), $ip) | out-null
+	$countrylist.Add($netarr.IndexOf($ip), $report.country) | out-null 
+	$ASOwnerlist.Add($netarr.IndexOf($ip), $report.as_owner) | out-null
+	$Resolutionlist.Add($netarr.IndexOf($ip), $resolution[0]) | out-null
+	$DetectedURLlist.Add($netarr.IndexOf($ip), $report.detected_urls[0]) | out-null
+	$UndetectedURLlist.Add($netarr.IndexOf($ip), $report.undetected_urls[0]) | out-null
+	$DetectedDownloaded.Add($netarr.IndexOf($ip), $report.detected_downloaded_samples[0]) | out-null
 
 	if(!$report.detected_downloaded_samples[0] -and !$report.detected_urls[0]){
-		$WorthInvestigating.Add($netarr.IndexOf($ip), "N")
+		$WorthInvestigating.Add($netarr.IndexOf($ip), "N") | out-null
 	}
 	if($DetectedDownloaded -or $DetectedURLlist){
-		$WorthInvestigating.Add($netarr.IndexOf($ip), "Y")
+		$WorthInvestigating.Add($netarr.IndexOf($ip), "Y") | out-null
 	}
 
 	$hash = New-Object PSObject -property @{Index=$netarr.IndexOf($ip);IP=$ip;Country=$countrylist[$netarr.IndexOf($ip)];ASOwner=$ASOwnerList[$netarr.IndexOf($ip)];Resolution=$ResolutionList[$netarr.IndexOf($ip)];DetectedURL=$DetectedURLlist[$netarr.IndexOf($ip)];UndetectedURLs=$UndetectedURLlist[$netarr.IndexOf($ip)];DetectedMalware=$DetectedDownloaded[$netarr.IndexOf($ip)];WorthInvestigating=$WorthInvestigating[$netarr.IndexOf($ip)]}
 	$scaninfo += $hash
 
-	if($offbyone % 4 -eq 0){
-		#Display a grid view of all VT data
-		$scaninfo | select-object Index,IP,Country,WorthInvestigating,ASOwner,DetectedMalware,Resolution,DetectedURL,UndetectedURLs | out-gridview
+	sleep 60
 
-		sleep 60
-	}
-
-	$offbyone += 1
 }
+
+#Display a grid view of all VT data
+$scaninfo | select-object Index,IP,Country,WorthInvestigating,ASOwner,DetectedMalware,Resolution,DetectedURL,UndetectedURLs | out-gridview
+
+$scaninfo | export-csv -path $outfile
 
 <#
 (0..$netarr.length) | %{
