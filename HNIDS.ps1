@@ -123,7 +123,7 @@ foreach($ip in $netarr){
 	$hash = New-Object PSObject -property @{Index=$netarr.IndexOf($ip);IP=$ip;Country=$countrylist[$netarr.IndexOf($ip)];ASOwner=$ASOwnerList[$netarr.IndexOf($ip)];Resolution=$ResolutionList[$netarr.IndexOf($ip)];DetectedURL=$DetectedURLlist[$netarr.IndexOf($ip)];UndetectedURLs=$UndetectedURLlist[$netarr.IndexOf($ip)];DetectedMalware=$DetectedDownloaded[$netarr.IndexOf($ip)];WorthInvestigating=$WorthInvestigating[$netarr.IndexOf($ip)]}
 	$scaninfo += $hash
 
-	sleep 60
+	sleep 15
 
 }
 
