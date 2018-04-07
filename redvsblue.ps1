@@ -239,26 +239,34 @@ function Generate-Form{
 	###$Form.TopMost = $true
 	$Form.Width = 672
 	$Form.Height = 650
+	$Font = New-Object System.Drawing.Font("Segoe UI",24)
+	$Form.font = $Font
 
 
 	#####################################################################################
 	###   Top half of form - Buttons and text boxes for blue team utilities
 	#####################################################################################
 
+	#Write a header on the top of the form
+	$Label = New-Object System.Windows.Forms.Label
+	$Label.Text = "              Blue Team Security Settings"
+	$Label.AutoSize = $True
+	$Form.Controls.Add($Label)
+
 	###Draw buttons in window
-	CreateFormButton Logging Logging 000000 86 33 6 9 {MoreDetails Logging "This is some information about logging, including what we will be doing and how to revert it." {CallScript Logging}}
-	CreateFormButton Sinkhole Sinkhole 000000 86 33 6 58 {MoreDetails Sinkhole "This is some information about Sinkhole, including what we will be doing and how to revert it." {CallScript Sinkhole}}
+	CreateFormButton Logging Logging 000000 86 33 6 90 {MoreDetails Logging "This is some information about logging, including what we will be doing and how to revert it." {CallScript Logging}}
+	CreateFormButton Sinkhole Sinkhole 000000 86 33 6 140 {MoreDetails Sinkhole "This is some information about Sinkhole, including what we will be doing and how to revert it." {CallScript Sinkhole}}
 ###	CreateFormButton VulnTrack VulnTrack 000000 86 33 6 104 {MoreDetails VulnTrack "This is some information about VulnTrack, including what we will be doing and how to revert it." {CallScript VulnTrack}}
 ###	CreateFormButton HNIDS HNIDS 000000 86 33 6 146 {MoreDetails HNIDS "This is some information about HNIDS, including what we will be doing and how to revert it." {CallScript HNIDS}}
-	CreateFormButton IPINT IPINT 000000 86 33 6 192 {MoreDetails IPINT "This is some information about IPINT, including what we will be doing and how to revert it." {CallScript IPINT}}
+	CreateFormButton IPINT IPINT 000000 86 33 6 190 {MoreDetails IPINT "This is some information about IPINT, including what we will be doing and how to revert it." {CallScript IPINT}}
 	CreateRedteamButton Redteam "Red Team" 000000 300 50 177 542 {MoreDetails Redteam "This is some information about Red team, including what we will be doing and how to revert it." {CallScript Redteam}}
 
 	###Draw text boxes in window
-	drawTextbox Loggingtext "Set up Windows logging, according to NSA Spotting the Adversary document" 473 20 120 15 eeeeee 000000
+	drawTextbox Loggingtext "Set up Windows logging, according to NSA Spotting the Adversary document" 473 20 120 93 eeeeee 000000
 ###	drawTextbox VulnTracktext "Keep track of your vulnerabilities with alerts and email notifications" 473 20 120 111 eeeeee 000000
-	drawTextbox Sinkholetext "Configure routes to send malware traffic to NULL" 473 20 120 64 eeeeee 000000
+	drawTextbox Sinkholetext "Configure routes to send malware traffic to NULL" 473 20 120 144 eeeeee 000000
 ###	drawTextbox HNIDStext "Host-based Network Intrusion Detection System" 473 20 120 154 eeeeee 000000
-	drawTextbox IPINTtext "Open-source intelligence about IP Address information" 473 20 120 200 eeeeee 000000
+	drawTextbox IPINTtext "Open-source intelligence about IP Address information" 473 20 120 194 eeeeee 000000
 	
 	###Draw System Info section banner
 	drawTextbox SystemInfo "                                                             System Health Checks" 672 7 0 250 bbbbbb 000000
