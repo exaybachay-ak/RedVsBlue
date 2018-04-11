@@ -181,6 +181,21 @@ function CreateRedteamButton{
 	$Form.controls.Add($Button)
 }
 
+function drawFormLink($text,$width,$height,$font,$fontsize,$locationx,$locationy,$clickaction){
+	$LinkLabel = New-Object System.Windows.Forms.LinkLabel
+	$LinkLabel.LinkColor = "#000088"
+	$LinkLabel.ActiveLinkColor = "RED"
+	$LinkLabel.Text = "$text"
+	$LinkLabel.Size = new-object System.Drawing.Size($width,$height)
+	$LinkLabel.Font = "$font,$fontsize"
+	$LinkLabel.Location = new-object System.Drawing.Size($locationx,$locationy)
+	#The neverunderline thing was not easy to find.. here's the link:
+	#https://stackoverflow.com/questions/27820164/powershell-net-clickable-link
+	$LinkLabel.LinkBehavior = "NeverUnderline"
+	$LinkLabel.Add_Click($clickaction)
+	$Form.Controls.Add($LinkLabel)
+}
+
 function drawTextbox($name,$text,$width,$height,$locationx,$locationy,$color,$forecolor){
 	$name = New-Object system.windows.Forms.TextBox
 	$name.Text = "$text"
@@ -201,6 +216,14 @@ function drawImage($image,$locationx,$locationy){
 	$PictureBox.location = new-object system.drawing.point($locationx,$locationy)
 	$PictureBox.Image = $image
 	$Form.controls.Add($PictureBox)
+}
+
+function drawLabel($name,$locationx,$locationy,$text){
+	$Label = New-Object System.Windows.Forms.Label
+	$Label.AutoSize = $True
+	$Label.Location = new-object System.Drawing.Size($locationx,$locationy)
+	$Label.Text = $text
+	$Form.Controls.Add($Label)
 }
 
 function Generate-Form{
@@ -248,21 +271,25 @@ function Generate-Form{
 	#####################################################################################
 
 	#Write a header on the top of the form
-	$Label = New-Object System.Windows.Forms.Label
-	$Label.Text = "              Blue Team Security Settings"
-	$Label.AutoSize = $True
-	$Form.Controls.Add($Label)
+	#$Label = New-Object System.Windows.Forms.Label
+	#$Label.Text = "              Blue Team Security Settings"
+	#$Label.AutoSize = $True
+	#$Form.Controls.Add($Label)
+	drawLabel Header 5 5 "              Blue Team Security Settings"
 
 	###Draw buttons in window
-	CreateFormButton Logging Logging 000000 86 33 6 90 {MoreDetails Logging "This is some information about logging, including what we will be doing and how to revert it." {CallScript Logging}}
-	CreateFormButton Sinkhole Sinkhole 000000 86 33 6 140 {MoreDetails Sinkhole "This is some information about Sinkhole, including what we will be doing and how to revert it." {CallScript Sinkhole}}
+###	CreateFormButton Logging Logging 000000 86 33 6 90 {MoreDetails Logging "This is some information about logging, including what we will be doing and how to revert it." {CallScript Logging}}
+###	CreateFormButton Sinkhole Sinkhole 000000 86 33 6 140 {MoreDetails Sinkhole "This is some information about Sinkhole, including what we will be doing and how to revert it." {CallScript Sinkhole}}
 ###	CreateFormButton VulnTrack VulnTrack 000000 86 33 6 104 {MoreDetails VulnTrack "This is some information about VulnTrack, including what we will be doing and how to revert it." {CallScript VulnTrack}}
 ###	CreateFormButton HNIDS HNIDS 000000 86 33 6 146 {MoreDetails HNIDS "This is some information about HNIDS, including what we will be doing and how to revert it." {CallScript HNIDS}}
-	CreateFormButton IPINT IPINT 000000 86 33 6 190 {MoreDetails IPINT "This is some information about IPINT, including what we will be doing and how to revert it." {CallScript IPINT}}
-	CreateRedteamButton Redteam "Red Team" 000000 300 50 177 542 {MoreDetails Redteam "This is some information about Red team, including what we will be doing and how to revert it." {CallScript Redteam}}
+###	CreateFormButton IPINT IPINT 000000 86 33 6 190 {MoreDetails IPINT "This is some information about IPINT, including what we will be doing and how to revert it." {CallScript IPINT}}
+###	CreateRedteamButton Redteam "Red Team" 000000 300 50 177 542 {MoreDetails Redteam "This is some information about Red team, including what we will be doing and how to revert it." {CallScript Redteam}}
+### $text,$width,$height,$font,$fontsize,$locationx,$locationy,$clickaction
+	drawFormLink "Launch HNIDS.ps1" 200 30 "Segoe UI" 16 30 50 {MoreDetails IPINT "This is some information about IPINT, including what we will be doing and how to revert it." {CallScript IPINT}}
 
 	###Draw text boxes in window
-	drawTextbox Loggingtext "Set up Windows logging, according to NSA Spotting the Adversary document" 473 20 120 93 eeeeee 000000
+### $name,$text,$width,$height,$locationx,$locationy,$color,$forecolor
+	drawTextbox Loggingtext "Set up Windows logging, according to NSA Spotting the Adversary document" 473 20 120 83 eeeeee 000000
 ###	drawTextbox VulnTracktext "Keep track of your vulnerabilities with alerts and email notifications" 473 20 120 111 eeeeee 000000
 	drawTextbox Sinkholetext "Configure routes to send malware traffic to NULL" 473 20 120 144 eeeeee 000000
 ###	drawTextbox HNIDStext "Host-based Network Intrusion Detection System" 473 20 120 154 eeeeee 000000
