@@ -87,7 +87,7 @@ Function MoreDetails{
 	
 	$NewForm = New-Object system.Windows.Forms.Form
 	$NewForm.Text = "Red vs Blue"
-	$NewForm.BackColor = "#0033ff"
+	$NewForm.BackColor = "#ffffff"
 	$NewForm.Width = 672
 	$NewForm.Height = 350
 
@@ -101,7 +101,7 @@ Function MoreDetails{
 
 	$Button = New-Object system.windows.Forms.Button
 	$Button.Text = "Run	 $controlname.ps1"
-	$Button.ForeColor = "#ffffff"
+	$Button.ForeColor = "#000000"
 	$Button.width = "300"
 	$Button.height = "50"
 	$Button.location = new-object system.drawing.point(177,242)
@@ -215,7 +215,7 @@ function Generate-Form{
 	###Create main form window
 	$Form = New-Object system.Windows.Forms.Form
 	$Form.Text = "Red vs Blue"
-	$Form.BackColor = "#ffffff"
+	$Form.BackColor = "#efefef"
 	###$Form.TopMost = $true
 	$Form.Width = 672
 	$Form.Height = 650
