@@ -87,7 +87,7 @@ Function MoreDetails{
 	
 	$NewForm = New-Object system.Windows.Forms.Form
 	$NewForm.Text = "Red vs Blue"
-	$NewForm.BackColor = "#ffffff"
+	$NewForm.BackColor = "#efefef"
 	$NewForm.Width = 672
 	$NewForm.Height = 350
 
