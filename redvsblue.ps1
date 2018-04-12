@@ -176,11 +176,13 @@ function drawImage($image,$locationx,$locationy){
 	$Form.controls.Add($PictureBox)
 }
 
-function drawLabel($name,$locationx,$locationy,$text){
+function drawLabel($name,$size,$width,$height,$locationx,$locationy,$text){
 	$Label = New-Object System.Windows.Forms.Label
-	$Label.AutoSize = $True
 	$Label.Location = new-object System.Drawing.Size($locationx,$locationy)
 	$Label.Text = $text
+	$Label.font = "Segoe UI,$size"
+	$Label.width = "$width"
+	$Label.height = "$height"
 	$Form.Controls.Add($Label)
 }
 
@@ -228,9 +230,9 @@ function Generate-Form{
 	#####################################################################################
 
 	#Write a header on the top of the form
-	drawLabel Header 5 5 "              Blue Team Security Settings"
+	drawLabel Header 20 700 50 155 5 "Blue Team Security Settings"
 
-	###Draw buttons in window
+	###Draw links in window
 	drawFormLink "Launch Logging.ps1" 250 30 "Segoe UI" 16 30 50 {MoreDetails Logging "This is some information about Logging, including what we will be doing and how to revert it." {CallScript Logging}}
 	drawFormLink "Launch Sinkhole.ps1" 250 30 "Segoe UI" 16 30 110 {MoreDetails Sinkhole "This is some information about Sinkhole, including what we will be doing and how to revert it." {CallScript Sinkhole}}
 	drawFormLink "Launch IPINT.ps1" 250 30 "Segoe UI" 16 30 170 {MoreDetails IPINT "This is some information about IPINT, including what we will be doing and how to revert it." {CallScript IPINT}}
@@ -239,11 +241,18 @@ function Generate-Form{
 
 
 	###Draw text boxes in window
-	drawTextbox Loggingtext "Set up Windows logging, according to NSA Spotting the Adversary document" 473 20 35 83 eeeeee 000000
-	drawTextbox Sinkholetext "Configure routes to send malware traffic to NULL" 473 20 35 143 eeeeee 000000
-	drawTextbox IPINTtext "Open-source intelligence about IP Address information" 473 20 35 203 eeeeee 000000
- 	drawTextbox HNIDStext "Host-based Network Intrusion Detection System" 473 20 35 263 eeeeee 000000
-	drawTextbox VulnTracktext "Keep track of your vulnerabilities with alerts and email notifications" 473 20 35 323 eeeeee 000000
+###	drawTextbox Loggingtext "Set up Windows logging, according to NSA Spotting the Adversary document" 473 20 35 83 eeeeee 000000
+###	drawTextbox Sinkholetext "Configure routes to send malware traffic to NULL" 473 20 35 143 eeeeee 000000
+###	drawTextbox IPINTtext "Open-source intelligence about IP Address information" 473 20 35 203 eeeeee 000000
+###	drawTextbox HNIDStext "Host-based Network Intrusion Detection System" 473 20 35 263 eeeeee 000000
+###	drawTextbox VulnTracktext "Keep track of your vulnerabilities with alerts and email notifications" 473 20 35 323 eeeeee 000000
+
+	drawLabel Loggingtext 10 700 30 35 83 "Set up Windows logging, according to NSA Spotting the Adversary document"
+	drawLabel Sinkholetext 10 700 30 35 143 "Configure routes to send malware traffic to NULL"
+	drawLabel IPINTtext 10 700 30 35 203 "Open-source intelligence about IP Address information"
+ 	drawLabel HNIDStext 10 700 30 35 263 "Host-based Network Intrusion Detection System"
+	drawLabel VulnTracktext 10 700 30 35 323 "Keep track of your vulnerabilities with alerts and email notifications"
+
 	
 	###Draw System Info section banner
 	drawTextbox SystemInfo "                                                             System Health Checks" 672 7 0 365 bbbbbb 000000
