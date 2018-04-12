@@ -240,13 +240,7 @@ function Generate-Form{
 	drawFormLink "Launch VulnTrack.ps1" 250 30 "Segoe UI" 16 30 290 {MoreDetails VulnTrack "This is some information about VulnTrack, including what we will be doing and how to revert it." {CallScript VulnTrack}}
 
 
-	###Draw text boxes in window
-###	drawTextbox Loggingtext "Set up Windows logging, according to NSA Spotting the Adversary document" 473 20 35 83 eeeeee 000000
-###	drawTextbox Sinkholetext "Configure routes to send malware traffic to NULL" 473 20 35 143 eeeeee 000000
-###	drawTextbox IPINTtext "Open-source intelligence about IP Address information" 473 20 35 203 eeeeee 000000
-###	drawTextbox HNIDStext "Host-based Network Intrusion Detection System" 473 20 35 263 eeeeee 000000
-###	drawTextbox VulnTracktext "Keep track of your vulnerabilities with alerts and email notifications" 473 20 35 323 eeeeee 000000
-
+	###Draw text labels in window
 	drawLabel Loggingtext 10 700 30 35 83 "Set up Windows logging, according to NSA Spotting the Adversary document"
 	drawLabel Sinkholetext 10 700 30 35 143 "Configure routes to send malware traffic to NULL"
 	drawLabel IPINTtext 10 700 30 35 203 "Open-source intelligence about IP Address information"
