@@ -232,19 +232,20 @@ function Generate-Form{
 	#Write a header on the top of the form
 	drawLabel Header 20 700 50 155 5 "Blue Team Security Settings"
 
-	###Draw links in window
+	###Draw links and text labels in window
 	drawFormLink "Launch Logging.ps1" 250 30 "Segoe UI" 16 30 50 {MoreDetails Logging "This is some information about Logging, including what we will be doing and how to revert it." {CallScript Logging}}
-	drawFormLink "Launch Sinkhole.ps1" 250 30 "Segoe UI" 16 30 110 {MoreDetails Sinkhole "This is some information about Sinkhole, including what we will be doing and how to revert it." {CallScript Sinkhole}}
-	drawFormLink "Launch IPINT.ps1" 250 30 "Segoe UI" 16 30 170 {MoreDetails IPINT "This is some information about IPINT, including what we will be doing and how to revert it." {CallScript IPINT}}
-	drawFormLink "Launch HNIDS.ps1" 250 30 "Segoe UI" 16 30 230 {MoreDetails HNIDS "This is some information about HNIDS, including what we will be doing and how to revert it." {CallScript HNIDS}}
-	drawFormLink "Launch VulnTrack.ps1" 250 30 "Segoe UI" 16 30 290 {MoreDetails VulnTrack "This is some information about VulnTrack, including what we will be doing and how to revert it." {CallScript VulnTrack}}
-
-
-	###Draw text labels in window
 	drawLabel Loggingtext 10 700 30 35 83 "Set up Windows logging, according to NSA Spotting the Adversary document"
+
+	drawFormLink "Launch Sinkhole.ps1" 250 30 "Segoe UI" 16 30 110 {MoreDetails Sinkhole "This is some information about Sinkhole, including what we will be doing and how to revert it." {CallScript Sinkhole}}
 	drawLabel Sinkholetext 10 700 30 35 143 "Configure routes to send malware traffic to NULL"
+
+	drawFormLink "Launch IPINT.ps1" 250 30 "Segoe UI" 16 30 170 {MoreDetails IPINT "This is some information about IPINT, including what we will be doing and how to revert it." {CallScript IPINT}}
 	drawLabel IPINTtext 10 700 30 35 203 "Open-source intelligence about IP Address information"
+
+	drawFormLink "Launch HNIDS.ps1" 250 30 "Segoe UI" 16 30 230 {MoreDetails HNIDS "This is some information about HNIDS, including what we will be doing and how to revert it." {CallScript HNIDS}}
  	drawLabel HNIDStext 10 700 30 35 263 "Host-based Network Intrusion Detection System"
+
+	drawFormLink "Launch VulnTrack.ps1" 250 30 "Segoe UI" 16 30 290 {MoreDetails VulnTrack "This is some information about VulnTrack, including what we will be doing and how to revert it." {CallScript VulnTrack}}
 	drawLabel VulnTracktext 10 700 30 35 323 "Keep track of your vulnerabilities with alerts and email notifications"
 
 	
