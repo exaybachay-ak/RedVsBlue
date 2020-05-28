@@ -41,25 +41,25 @@ $sysmonlog = Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational"
 #300MB, in bytes is 314572800
 #300MB, in Kilobytes is 307200
 #1GB, in Kilobytes is 1024000
-#5GB, in Kilobytes is 5124000
-if($applog -lt 5124000){
-	limit-eventlog -logname "Application" -MaximumSize 5000MB
+#5GB, in Kilobytes is 4096000
+if($applog -lt 4096000){
+	limit-eventlog -logname "Application" -MaximumSize 4000MB
 }
 
-if($seclog -lt 5124000){
-	limit-eventlog -logname "Security" -MaximumSize 5000MB
+if($seclog -lt 4096000){
+	limit-eventlog -logname "Security" -MaximumSize 4000MB
 }
 
-if($syslog -lt 5124000){
-	limit-eventlog -logname "System" -MaximumSize 5000MB
+if($syslog -lt 4096000){
+	limit-eventlog -logname "System" -MaximumSize 4000MB
 }
 
-if($pslog -lt 5124000){
-	limit-eventlog -logname "Windows Powershell" -MaximumSize 5000MB
+if($pslog -lt 4096000){
+	limit-eventlog -logname "Windows Powershell" -MaximumSize 4000MB
 }
 
-if($pslog -lt 5124000){
-	limit-eventlog -logname "Windows Powershell" -MaximumSize 5000MB
+if($pslog -lt 4096000){
+	limit-eventlog -logname "Windows Powershell" -MaximumSize 4000MB
 }
 
 if($sysmonlog.MaximumSizeInBytes -lt 2147483648){
