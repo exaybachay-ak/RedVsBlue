@@ -35,7 +35,7 @@ $pslog = $loginfo[10].MaximumKilobytes
 $sysmonlog = Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational"
 
 #####################################################################################
-###   Increase logging to max of 1GB
+###   Increase logging to max of 4GB
 #####################################################################################
 
 #300MB, in bytes is 314572800
