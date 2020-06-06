@@ -11,8 +11,7 @@ if($sysmoninstalled -eq "True"){
 }
 
 else{
-	& "$(pwd)\sysmon.exe" -accepteula -i -h md5 -l -n
-	& "$(pwd)\sysmon.exe" -c sysmonconfig-export.xml
+	& "$(pwd)\sysmon64.exe" -accepteula -i sysmonconfig-export.xml
 }
 
 #####################################################################################
