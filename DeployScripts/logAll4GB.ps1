@@ -100,7 +100,7 @@ Select PSChildName, Version, Release, @{
 $dotnetver = $dotnetver | sort Version
 
 # Grab the largest entry in the table for reference
-$dotnetcheck = $dotnetver.Version[$dotnetver.length-1]
+$dotnetcheck = $dotnetver[$dotnetver.length-1].Version
 
 if($dotnetcheck -ge 4.5){
 	# Check for WMF 4.0 and WMF 5.0 - Should be PSVersion 5 or above
