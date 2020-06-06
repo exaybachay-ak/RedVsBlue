@@ -63,7 +63,7 @@ if($pslog -lt 4096000){
 }
 
 if($sysmonlog.MaximumSizeInBytes -lt 2147483648){
-	wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:2147483648
+	wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:4294967296
 }
 
 #####################################################################################
