@@ -15,7 +15,7 @@ $alienvault = (invoke-webrequest -URI "https://reputation.alienvault.com/reputat
 
 #Echo all ip addresses out into a full blacklist file
 $greensnow.rawcontent > blacklist.txt
-$banbenek.rawcontent >> blacklist.txt
+#$banbenek.rawcontent >> blacklist.txt
 $alientvault.rawcontent >> blacklist.txt
 
 #Filter out non-ip addresses from list
