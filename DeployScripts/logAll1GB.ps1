@@ -10,7 +10,12 @@ if($sysmoninstalled -eq "True"){
 	write-host > "$(pwd)\extlogging.txt"
 }
 else{
-	& "$(pwd)\sysmon64.exe" -accepteula -i sysmonconfig-export.xml
+	if([Environment]::Is64BitOperatingSystem){
+		& "$(pwd)\sysmon64.exe" -accepteula -i sysmonconfig-export.xml
+	}
+	else{
+		& "$(pwd)\sysmon.exe" -accepteula -i sysmonconfig-export.xml
+	}
 }
 
 #####################################################################################
