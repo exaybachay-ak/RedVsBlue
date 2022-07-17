@@ -31,13 +31,13 @@ $diskinfosize = $diskinfo.Used + $diskinfo.Free
 $onefifth = ($diskinfosize/5)
 
 
-#Get info about Event Logs
-$loginfo = Get-eventlog -list
-$seclog = $loginfo[8].MaximumKilobytes
-$syslog = $loginfo[9].MaximumKilobytes	
-$applog = $loginfo[0].MaximumKilobytes
-$pslog = $loginfo[10].MaximumKilobytes
-$sysmonlog = Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational"
+### Divide to get GB instead of Bytes
+$seclog = ((get-winevent -listlog Security).MaximumSizeInBytes) / 1GB
+$syslog = ((get-winevent -listlog System).MaximumSizeInBytes) / 1GB
+$applog = ((get-winevent -listlog Application).MaximumSizeInBytes) / 1GB
+$pslog = ((get-winevent -listlog "Windows Powershell").MaximumSizeInBytes) / 1GB
+$sysmonlog = ((Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational").MaximumSizeInBytes) / 1GB
+
 
 #####################################################################################
 ###   Increase logging to max of 4GB
