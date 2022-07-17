@@ -9,7 +9,11 @@ $sysmoninstalled = test-path "C:\Windows\System32\winevt\Logs\Microsoft-Windows-
 if($sysmoninstalled -eq "True"){
 	write-host > "$(pwd)\extlogging.txt"
 }
+
 else{
+	# Remove any stale configs if they exist
+	if(Test-path sysmonconfig-export.xml){ Remove-item sysmonconfig-export.xml }
+
 	# Download config from SoS 
 	invoke-webrequest -URI https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml
 	

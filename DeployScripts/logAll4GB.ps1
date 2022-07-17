@@ -11,8 +11,12 @@ if($sysmoninstalled -eq "True"){
 }
 
 else{
+	# Remove any stale configs if they exist
+	if(Test-path sysmonconfig-export.xml){ Remove-item sysmonconfig-export.xml }
+
 	# Download config from SoS 
 	invoke-webrequest -URI https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml
+
 	if([Environment]::Is64BitOperatingSystem){
 		& "$(pwd)\sysmon64.exe" -accepteula -i sysmonconfig-export.xml
 	}
@@ -31,7 +35,6 @@ $diskinfo = Get-PSDrive C | Select-Object Used,Free
 $percentfree = $diskinfo.Free / ($diskinfo.Used + $diskinfo.Free)
 $diskinfosize = $diskinfo.Used + $diskinfo.Free
 $onefifth = ($diskinfosize/5)
-
 
 ### Divide to get GB instead of Bytes
 $seclog = ((get-winevent -listlog Security).MaximumSizeInBytes) / 1GB
@@ -69,11 +72,9 @@ if($sysmonlog -lt 4){
 	wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:2147483648
 }
 
-
 #####################################################################################
 ###   Registry mods for Powershell logging
 #####################################################################################
-
 # Credit to matthewdunwoody for the registry imports
 # https://github.com/matthewdunwoody/PS_logging_reg
 
