@@ -45,23 +45,23 @@ $sysmonlog = ((Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational").Max
 #300MB, in Kilobytes is 307200
 #1GB, in Kilobytes is 1024000
 #5GB, in Kilobytes is 4096000
-if($applog -lt 4){
+if($applog -lt 1){
 	wevtutil sl Application /ms:1048576000
 }
 
-if($seclog -lt 4){
+if($seclog -lt 1){
 	wevtutil sl Security /ms:1048576000
 }
 
-if($syslog -lt 4){
+if($syslog -lt 1){
 	wevtutil sl System /ms:1048576000
 }
 
-if($pslog -lt 4){
+if($pslog -lt 1){
 	wevtutil sl "Windows Powershell" /ms:1048576000
 }
 
-if($sysmonlog -lt 4){
+if($sysmonlog -lt 1){
 	wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:1048576000
 }
 
