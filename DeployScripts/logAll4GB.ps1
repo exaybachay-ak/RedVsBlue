@@ -47,29 +47,26 @@ $sysmonlog = ((Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational").Max
 #300MB, in Kilobytes is 307200
 #1GB, in Kilobytes is 1024000
 #5GB, in Kilobytes is 4096000
-if($applog -lt 4096000){
-	limit-eventlog -logname "Application" -MaximumSize 4000MB
+if($applog -lt 4){
+	wevtutil sl Application /ms:4294967296
 }
 
-if($seclog -lt 4096000){
-	limit-eventlog -logname "Security" -MaximumSize 4000MB
+if($seclog -lt 4){
+	wevtutil sl Security /ms:4294967296
 }
 
-if($syslog -lt 4096000){
-	limit-eventlog -logname "System" -MaximumSize 4000MB
+if($syslog -lt 4){
+	wevtutil sl System /ms:4294967296
 }
 
-if($pslog -lt 4096000){
-	limit-eventlog -logname "Windows Powershell" -MaximumSize 4000MB
+if($pslog -lt 4){
+	wevtutil sl "Windows Powershell" /ms:4294967296
 }
 
-if($pslog -lt 4096000){
-	limit-eventlog -logname "Windows Powershell" -MaximumSize 4000MB
-}
-
-if($sysmonlog.MaximumSizeInBytes -lt 2147483648){
+if($sysmonlog -lt 4){
 	wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:2147483648
 }
+
 
 #####################################################################################
 ###   Registry mods for Powershell logging
