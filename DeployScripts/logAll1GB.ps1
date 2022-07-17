@@ -10,6 +10,10 @@ if($sysmoninstalled -eq "True"){
 	write-host > "$(pwd)\extlogging.txt"
 }
 else{
+	
+	# Download config from SoS 
+	invoke-webrequest -URI https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml
+
 	if([Environment]::Is64BitOperatingSystem){
 		& "$(pwd)\sysmon64.exe" -accepteula -i sysmonconfig-export.xml
 	}
