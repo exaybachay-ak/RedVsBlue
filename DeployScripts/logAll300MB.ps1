@@ -29,38 +29,40 @@ $percentfree = $diskinfo.Free / ($diskinfo.Used + $diskinfo.Free)
 $diskinfosize = $diskinfo.Used + $diskinfo.Free
 $onefifth = ($diskinfosize/5)
 	
-#Get info about Event Logs
-$loginfo = Get-eventlog -list
-$seclog = $loginfo[8].MaximumKilobytes
-$syslog = $loginfo[9].MaximumKilobytes	
-$applog = $loginfo[0].MaximumKilobytes
-$pslog = $loginfo[10].MaximumKilobytes
-$sysmonlog = Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational"
+### Divide to get GB instead of Bytes
+$seclog = ((get-winevent -listlog Security).MaximumSizeInBytes) / 1GB
+$syslog = ((get-winevent -listlog System).MaximumSizeInBytes) / 1GB
+$applog = ((get-winevent -listlog Application).MaximumSizeInBytes) / 1GB
+$pslog = ((get-winevent -listlog "Windows Powershell").MaximumSizeInBytes) / 1GB
+$sysmonlog = ((Get-WinEvent -ListLog "Microsoft-Windows-Sysmon/Operational").MaximumSizeInBytes) / 1GB
 
 
 #####################################################################################
-###   Increase logging to max of 300MB
+###   Increase logging to max of 4GB
 #####################################################################################
 
 #300MB, in bytes is 314572800
 #300MB, in Kilobytes is 307200
-if($applog -lt 307200){
-	limit-eventlog -logname "Application" -MaximumSize 300MB
+#1GB, in Kilobytes is 1024000
+#5GB, in Kilobytes is 4096000
+if($applog -lt .3){
+	wevtutil sl Application /ms:314572800
 }
-if($seclog -lt 307200){
-	limit-eventlog -logname "Security" -MaximumSize 300MB
+
+if($seclog -lt .3){
+	wevtutil sl Security /ms:314572800
 }
-if($syslog -lt 307200){
-	limit-eventlog -logname "System" -MaximumSize 300MB
+
+if($syslog -lt .3){
+	wevtutil sl System /ms:314572800
 }
-if($pslog -lt 307200){
-	limit-eventlog -logname "Windows Powershell" -MaximumSize 300MB		
+
+if($pslog -lt .3){
+	wevtutil sl "Windows Powershell" /ms:314572800
 }
-if($pslog -lt 307200){
-	limit-eventlog -logname "Windows Powershell" -MaximumSize 300MB		
-}
-if($sysmonlog.MaximumSizeInBytes -lt 2147483648){
-	wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:2147483648
+
+if($sysmonlog -lt .3){
+	wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:314572800
 }
 
 #####################################################################################
